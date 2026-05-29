@@ -1,0 +1,35 @@
+import { useState } from 'react'
+import './App.css'
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Login from "./pages/auth/Login";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Medicines from "./pages/medicine/Medicines";
+import Alerts from "./pages/alerts/Alerts";
+import Sales from "./pages/sales/Sales";
+import AIInsights from "./pages/ai/AIInsights";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+
+        <Route path="/" element={<Login />} />
+
+        <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route path="/medicines" element={<Medicines />} />
+
+        <Route path="/alerts" element={<Alerts />} />
+
+        <Route path="/sales" element={<Sales />} />
+
+        <Route path="/ai-insights" element={<AIInsights />} />
+
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
