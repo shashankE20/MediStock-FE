@@ -1,170 +1,173 @@
 import { useEffect, useState } from "react";
+import MainLayout from "../../layouts/MainLayout";
 import API from "../../api/axios";
 
 function Alerts() {
 
-  const [lowStockAlerts, setLowStockAlerts] = useState([]);
+    const [lowStockAlerts, setLowStockAlerts] = useState([]);
 
-  const [expiryAlerts, setExpiryAlerts] = useState([]);
+    const [expiryAlerts, setExpiryAlerts] = useState([]);
 
-  // FETCH LOW STOCK ALERTS
+    // FETCH LOW STOCK ALERTS
 
-  const getLowStockAlerts = async () => {
+    const getLowStockAlerts = async () => {
 
-    try {
+        try {
 
-      const response = await API.get(
-        "/alerts/low-stock"
-      );
+            const response = await API.get(
+                "/alerts/low-stock"
+            );
 
-      setLowStockAlerts(response.data);
+            setLowStockAlerts(response.data);
 
-    } catch (error) {
+        } catch (error) {
 
-      console.log(error);
-    }
-  };
+            console.log(error);
+        }
+    };
 
-  // FETCH EXPIRY ALERTS
+    // FETCH EXPIRY ALERTS
 
-  const getExpiryAlerts = async () => {
+    const getExpiryAlerts = async () => {
 
-    try {
+        try {
 
-      const response = await API.get(
-        "/alerts/expiry"
-      );
+            const response = await API.get(
+                "/alerts/expiry"
+            );
 
-      setExpiryAlerts(response.data);
+            setExpiryAlerts(response.data);
 
-    } catch (error) {
+        } catch (error) {
 
-      console.log(error);
-    }
-  };
+            console.log(error);
+        }
+    };
 
-  useEffect(() => {
+    useEffect(() => {
 
-    getLowStockAlerts();
+        getLowStockAlerts();
 
-    getExpiryAlerts();
+        getExpiryAlerts();
 
-  }, []);
+    }, []);
 
-  return (
+    return (
 
-    <div className="min-h-screen bg-gray-100 p-6">
+        <MainLayout>
+            <div className="min-h-screen bg-gray-100 p-6">
 
-      <h1 className="text-4xl font-bold text-blue-600 mb-8">
-        Alerts Dashboard
-      </h1>
+                <h1 className="text-4xl font-bold text-blue-600 mb-8">
+                    Alerts Dashboard
+                </h1>
 
-      {/* LOW STOCK ALERTS */}
+                {/* LOW STOCK ALERTS */}
 
-      <div className="mb-10">
+                <div className="mb-10">
 
-        <h2 className="text-2xl font-semibold text-red-500 mb-4">
-          Low Stock Alerts
-        </h2>
+                    <h2 className="text-2xl font-semibold text-red-500 mb-4">
+                        Low Stock Alerts
+                    </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          {
-            lowStockAlerts.length > 0
-              ? (
-                  lowStockAlerts.map((alert) => (
+                        {
+                            lowStockAlerts.length > 0
+                                ? (
+                                    lowStockAlerts.map((alert) => (
 
-                    <div
-                      key={alert.medicineId}
-                      className="bg-white p-6 rounded-xl shadow border-l-4 border-red-500"
-                    >
+                                        <div
+                                            key={alert.medicineId}
+                                            className="bg-white p-6 rounded-xl shadow border-l-4 border-red-500"
+                                        >
 
-                      <h3 className="text-xl font-bold mb-2">
-                        {alert.medicineName}
-                      </h3>
+                                            <h3 className="text-xl font-bold mb-2">
+                                                {alert.medicineName}
+                                            </h3>
 
-                      <p className="text-gray-700">
-                        Quantity Left:
-                        <span className="font-bold text-red-500 ml-2">
-                          {alert.quantity}
-                        </span>
-                      </p>
+                                            <p className="text-gray-700">
+                                                Quantity Left:
+                                                <span className="font-bold text-red-500 ml-2">
+                                                    {alert.quantity}
+                                                </span>
+                                            </p>
 
-                      <p className="mt-3 text-red-500 font-medium">
-                        {alert.alertMessage}
-                      </p>
+                                            <p className="mt-3 text-red-500 font-medium">
+                                                {alert.alertMessage}
+                                            </p>
 
-                    </div>
-                  ))
-                )
-              : (
-                  <p className="text-gray-500">
-                    No low stock alerts
-                  </p>
-                )
-          }
-
-        </div>
-
-      </div>
-
-      {/* EXPIRY ALERTS */}
-
-      <div>
-
-        <h2 className="text-2xl font-semibold text-yellow-500 mb-4">
-          Expiry Alerts
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-          {
-            expiryAlerts.length > 0
-              ? (
-                  expiryAlerts.map((alert) => (
-
-                    <div
-                      key={alert.medicineId}
-                      className="bg-white p-6 rounded-xl shadow border-l-4 border-yellow-500"
-                    >
-
-                      <h3 className="text-xl font-bold mb-2">
-                        {alert.medicineName}
-                      </h3>
-
-                      <p className="text-gray-700">
-                        Expiry Date:
-                        <span className="font-bold ml-2">
-                          {alert.expiryDate}
-                        </span>
-                      </p>
-
-                      <p className="text-gray-700 mt-2">
-                        Days Left:
-                        <span className="font-bold text-yellow-500 ml-2">
-                          {alert.daysLeft}
-                        </span>
-                      </p>
-
-                      <p className="mt-3 text-yellow-600 font-medium">
-                        {alert.alertMessage}
-                      </p>
+                                        </div>
+                                    ))
+                                )
+                                : (
+                                    <p className="text-gray-500">
+                                        No low stock alerts
+                                    </p>
+                                )
+                        }
 
                     </div>
-                  ))
-                )
-              : (
-                  <p className="text-gray-500">
-                    No expiry alerts
-                  </p>
-                )
-          }
 
-        </div>
+                </div>
 
-      </div>
-    </div>
-  );
+                {/* EXPIRY ALERTS */}
+
+                <div>
+
+                    <h2 className="text-2xl font-semibold text-yellow-500 mb-4">
+                        Expiry Alerts
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                        {
+                            expiryAlerts.length > 0
+                                ? (
+                                    expiryAlerts.map((alert) => (
+
+                                        <div
+                                            key={alert.medicineId}
+                                            className="bg-white p-6 rounded-xl shadow border-l-4 border-yellow-500"
+                                        >
+
+                                            <h3 className="text-xl font-bold mb-2">
+                                                {alert.medicineName}
+                                            </h3>
+
+                                            <p className="text-gray-700">
+                                                Expiry Date:
+                                                <span className="font-bold ml-2">
+                                                    {alert.expiryDate}
+                                                </span>
+                                            </p>
+
+                                            <p className="text-gray-700 mt-2">
+                                                Days Left:
+                                                <span className="font-bold text-yellow-500 ml-2">
+                                                    {alert.daysLeft}
+                                                </span>
+                                            </p>
+
+                                            <p className="mt-3 text-yellow-600 font-medium">
+                                                {alert.alertMessage}
+                                            </p>
+
+                                        </div>
+                                    ))
+                                )
+                                : (
+                                    <p className="text-gray-500">
+                                        No expiry alerts
+                                    </p>
+                                )
+                        }
+
+                    </div>
+
+                </div>
+            </div>
+        </MainLayout>
+    );
 }
 
 export default Alerts;

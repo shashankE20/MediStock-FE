@@ -1,5 +1,43 @@
-import { useState } from 'react'
-import './App.css'
+// import { useState } from 'react'
+// import './App.css'
+
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// import Login from "./pages/auth/Login";
+// import Dashboard from "./pages/dashboard/Dashboard";
+// import Medicines from "./pages/medicine/Medicines";
+// import Alerts from "./pages/alerts/Alerts";
+// import Sales from "./pages/sales/Sales";
+// import AIInsights from "./pages/ai/AIInsights";
+
+// import ProtectedRoute from './routes/ProtectedRoute';
+
+
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+
+//         <Route path="/" element={<Login />} />
+
+//         <Route path="/dashboard" element={<Dashboard />} />
+
+//         <Route path="/medicines" element={<Medicines />} />
+
+//         <Route path="/alerts" element={<Alerts />} />
+
+//         <Route path="/sales" element={<Sales />} />
+
+//         <Route path="/ai-insights" element={<AIInsights />} />
+
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+import "./App.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -10,6 +48,8 @@ import Alerts from "./pages/alerts/Alerts";
 import Sales from "./pages/sales/Sales";
 import AIInsights from "./pages/ai/AIInsights";
 
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 function App() {
   return (
     <BrowserRouter>
@@ -17,15 +57,50 @@ function App() {
 
         <Route path="/" element={<Login />} />
 
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/medicines" element={<Medicines />} />
+        <Route
+          path="/medicines"
+          element={
+            <ProtectedRoute>
+              <Medicines />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/alerts" element={<Alerts />} />
+        <Route
+          path="/alerts"
+          element={
+            <ProtectedRoute>
+              <Alerts />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/sales" element={<Sales />} />
+        <Route
+          path="/sales"
+          element={
+            <ProtectedRoute>
+              <Sales />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/ai-insights" element={<AIInsights />} />
+        <Route
+          path="/ai-insights"
+          element={
+            <ProtectedRoute>
+              <AIInsights />
+            </ProtectedRoute>
+          }
+        />
 
       </Routes>
     </BrowserRouter>

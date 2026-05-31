@@ -1,126 +1,129 @@
 import { useEffect, useState } from "react";
+import MainLayout from "../../layouts/MainLayout";
 import API from "../../api/axios";
 
 function Dashboard() {
 
-  const [dashboardData, setDashboardData] = useState({
-    totalMedicines: 0,
-    totalStockQuantity: 0,
-    lowStockCount: 0,
-    expiryAlertCount: 0,
-    totalSales: 0,
-  });
+    const [dashboardData, setDashboardData] = useState({
+        totalMedicines: 0,
+        totalStockQuantity: 0,
+        lowStockCount: 0,
+        expiryAlertCount: 0,
+        totalSales: 0,
+    });
 
-  const getDashboardSummary = async () => {
+    const getDashboardSummary = async () => {
 
-    try {
+        try {
 
-      const response = await API.get(
-        "/dashboard/summary"
-      );
+            const response = await API.get(
+                "/dashboard/summary"
+            );
 
-      setDashboardData(response.data);
+            setDashboardData(response.data);
 
-    } catch (error) {
+        } catch (error) {
 
-      console.log("Dashboard Error", error);
-    }
-  };
+            console.log("Dashboard Error", error);
+        }
+    };
 
-  useEffect(() => {
+    useEffect(() => {
 
-    getDashboardSummary();
+        getDashboardSummary();
 
-  }, []);
+    }, []);
 
-  return (
+    return (
 
-    <div className="min-h-screen bg-gray-100 p-6">
+        <MainLayout>
+            <div className="min-h-screen bg-gray-100 p-6">
 
-      <h1 className="text-4xl font-bold text-blue-600 mb-6">
-        MediStock Dashboard
-      </h1>
+                <h1 className="text-4xl font-bold text-blue-600 mb-6">
+                    MediStock Dashboard
+                </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        {/* Total Medicines */}
+                    {/* Total Medicines */}
 
-        <div className="bg-white p-6 rounded-xl shadow">
+                    <div className="bg-white p-6 rounded-xl shadow">
 
-          <h2 className="text-xl font-semibold">
-            Total Medicines
-          </h2>
+                        <h2 className="text-xl font-semibold">
+                            Total Medicines
+                        </h2>
 
-          <p className="text-3xl mt-4 font-bold text-blue-600">
-            {dashboardData.totalMedicines}
-          </p>
+                        <p className="text-3xl mt-4 font-bold text-blue-600">
+                            {dashboardData.totalMedicines}
+                        </p>
 
-        </div>
+                    </div>
 
-        {/* Total Stock */}
+                    {/* Total Stock */}
 
-        <div className="bg-white p-6 rounded-xl shadow">
+                    <div className="bg-white p-6 rounded-xl shadow">
 
-          <h2 className="text-xl font-semibold">
-            Total Stock
-          </h2>
+                        <h2 className="text-xl font-semibold">
+                            Total Stock
+                        </h2>
 
-          <p className="text-3xl mt-4 font-bold text-green-600">
-            {dashboardData.totalStockQuantity}
-          </p>
+                        <p className="text-3xl mt-4 font-bold text-green-600">
+                            {dashboardData.totalStockQuantity}
+                        </p>
 
-        </div>
+                    </div>
 
-        {/* Low Stock */}
+                    {/* Low Stock */}
 
-        <div className="bg-white p-6 rounded-xl shadow">
+                    <div className="bg-white p-6 rounded-xl shadow">
 
-          <h2 className="text-xl font-semibold">
-            Low Stock Alerts
-          </h2>
+                        <h2 className="text-xl font-semibold">
+                            Low Stock Alerts
+                        </h2>
 
-          <p className="text-3xl mt-4 font-bold text-red-500">
-            {dashboardData.lowStockCount}
-          </p>
+                        <p className="text-3xl mt-4 font-bold text-red-500">
+                            {dashboardData.lowStockCount}
+                        </p>
 
-        </div>
+                    </div>
 
-        {/* Expiry Alerts */}
+                    {/* Expiry Alerts */}
 
-        <div className="bg-white p-6 rounded-xl shadow">
+                    <div className="bg-white p-6 rounded-xl shadow">
 
-          <h2 className="text-xl font-semibold">
-            Expiry Alerts
-          </h2>
+                        <h2 className="text-xl font-semibold">
+                            Expiry Alerts
+                        </h2>
 
-          <p className="text-3xl mt-4 font-bold text-yellow-500">
-            {dashboardData.expiryAlertCount}
-          </p>
+                        <p className="text-3xl mt-4 font-bold text-yellow-500">
+                            {dashboardData.expiryAlertCount}
+                        </p>
 
-        </div>
+                    </div>
 
-      </div>
+                </div>
 
-      {/* Total Sales Card */}
+                {/* Total Sales Card */}
 
-      <div className="mt-6">
+                <div className="mt-6">
 
-        <div className="bg-white p-6 rounded-xl shadow w-full md:w-[300px]">
+                    <div className="bg-white p-6 rounded-xl shadow w-full md:w-[300px]">
 
-          <h2 className="text-xl font-semibold">
-            Total Sales
-          </h2>
+                        <h2 className="text-xl font-semibold">
+                            Total Sales
+                        </h2>
 
-          <p className="text-3xl mt-4 font-bold text-purple-600">
-            {dashboardData.totalSales}
-          </p>
+                        <p className="text-3xl mt-4 font-bold text-purple-600">
+                            {dashboardData.totalSales}
+                        </p>
 
-        </div>
+                    </div>
 
-      </div>
+                </div>
 
-    </div>
-  );
+            </div>
+        </MainLayout>
+    );
 }
 
 export default Dashboard;

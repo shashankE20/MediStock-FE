@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
 
+import { toast } from "react-toastify";
+
 function Login() {
 
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ function Login() {
 
     e.preventDefault();
 
+    console.log(formData);
+
     try {
 
       const response = await API.post(
@@ -37,11 +41,13 @@ function Login() {
         response.data
       );
 
+      toast.success("Lgoin Successful");
       navigate("/dashboard");
 
     } catch (err) {
 
       setError("Invalid Email or Password");
+      toast.error("Invalid mail or passward");
     }
   };
 

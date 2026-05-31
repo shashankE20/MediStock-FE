@@ -1,314 +1,319 @@
 import { useEffect, useState } from "react";
+import MainLayout from "../../layouts/MainLayout";
 import API from "../../api/axios";
+
+import { toast } from "react-toastify";
 
 function Sales() {
 
-  const [medicines, setMedicines] = useState([]);
+    const [medicines, setMedicines] = useState([]);
 
-  const [weeklyReport, setWeeklyReport] = useState([]);
+    const [weeklyReport, setWeeklyReport] = useState([]);
 
-  const [saleData, setSaleData] = useState({
-    medicineId: "",
-    quantitySold: "",
-  });
-
-  // FETCH MEDICINES
-
-  const fetchMedicines = async () => {
-
-    try {
-
-      const response = await API.get(
-        "/medicines"
-      );
-
-      setMedicines(response.data);
-
-    } catch (error) {
-
-      console.log(error);
-    }
-  };
-
-  // FETCH WEEKLY REPORT
-
-  const fetchWeeklyReport = async () => {
-
-    try {
-
-      const response = await API.get(
-        "/sales/weekly-report"
-      );
-
-      setWeeklyReport(response.data);
-
-    } catch (error) {
-
-      console.log(error);
-    }
-  };
-
-  // HANDLE INPUT CHANGE
-
-  const handleChange = (e) => {
-
-    setSaleData({
-      ...saleData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // SELL MEDICINE
-
-  const sellMedicine = async (e) => {
-
-    e.preventDefault();
-
-    try {
-
-      await API.post(
-        `/sales/sell/${saleData.medicineId}`,
-        {
-          quantitySold: Number(
-            saleData.quantitySold
-          ),
-        }
-      );
-
-      alert("Medicine Sold Successfully");
-
-      fetchMedicines();
-
-      fetchWeeklyReport();
-
-      setSaleData({
+    const [saleData, setSaleData] = useState({
         medicineId: "",
         quantitySold: "",
-      });
+    });
 
-    } catch (error) {
+    // FETCH MEDICINES
 
-      console.log(error);
+    const fetchMedicines = async () => {
 
-      alert("Sale Failed");
-    }
-  };
+        try {
 
-  useEffect(() => {
+            const response = await API.get(
+                "/medicines"
+            );
 
-    fetchMedicines();
+            setMedicines(response.data);
 
-    fetchWeeklyReport();
+        } catch (error) {
 
-  }, []);
+            console.log(error);
+        }
+    };
 
-  return (
+    // FETCH WEEKLY REPORT
 
-    <div className="min-h-screen bg-gray-100 p-6">
+    const fetchWeeklyReport = async () => {
 
-      <h1 className="text-4xl font-bold text-blue-600 mb-8">
-        Sales Management
-      </h1>
+        try {
 
-      {/* SELL MEDICINE FORM */}
+            const response = await API.get(
+                "/sales/weekly-report"
+            );
 
-      <div className="bg-white p-6 rounded-xl shadow mb-10">
+            setWeeklyReport(response.data);
 
-        <h2 className="text-2xl font-semibold mb-4">
-          Sell Medicine
-        </h2>
+        } catch (error) {
 
-        <form
-          onSubmit={sellMedicine}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-        >
+            console.log(error);
+        }
+    };
 
-          {/* MEDICINE SELECT */}
+    // HANDLE INPUT CHANGE
 
-          <select
-            name="medicineId"
-            value={saleData.medicineId}
-            onChange={handleChange}
-            className="border p-3 rounded-lg"
-            required
-          >
+    const handleChange = (e) => {
 
-            <option value="">
-              Select Medicine
-            </option>
+        setSaleData({
+            ...saleData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
-            {
-              medicines.map((medicine) => (
+    // SELL MEDICINE
 
-                <option
-                  key={medicine.id}
-                  value={medicine.id}
-                >
-                  {medicine.medicineName}
-                </option>
-              ))
-            }
+    const sellMedicine = async (e) => {
 
-          </select>
+        e.preventDefault();
 
-          {/* QUANTITY */}
+        try {
 
-          <input
-            type="number"
-            name="quantitySold"
-            placeholder="Quantity Sold"
-            value={saleData.quantitySold}
-            onChange={handleChange}
-            className="border p-3 rounded-lg"
-            required
-          />
+            await API.post(
+                `/sales/sell/${saleData.medicineId}`,
+                {
+                    quantitySold: Number(
+                        saleData.quantitySold
+                    ),
+                }
+            );
 
-          {/* BUTTON */}
+            toast.success("Medicine Sold Successfully");
 
-          <button
-            type="submit"
-            className="bg-green-600 text-white rounded-lg p-3 hover:bg-green-700"
-          >
-            Sell Medicine
-          </button>
+            fetchMedicines();
 
-        </form>
+            fetchWeeklyReport();
 
-      </div>
+            setSaleData({
+                medicineId: "",
+                quantitySold: "",
+            });
 
-      {/* MEDICINES STOCK TABLE */}
+        } catch (error) {
 
-      <div className="bg-white p-6 rounded-xl shadow mb-10 overflow-x-auto">
+            console.log(error);
 
-        <h2 className="text-2xl font-semibold mb-4">
-          Current Stock
-        </h2>
+            alert("Sale Failed");
+        }
+    };
 
-        <table className="w-full border-collapse">
+    useEffect(() => {
 
-          <thead>
+        fetchMedicines();
 
-            <tr className="bg-blue-600 text-white">
+        fetchWeeklyReport();
 
-              <th className="p-3 text-left">
-                Medicine
-              </th>
+    }, []);
 
-              <th className="p-3 text-left">
-                Quantity
-              </th>
+    return (
 
-              <th className="p-3 text-left">
-                Price
-              </th>
+        <MainLayout>
+            <div className="min-h-screen bg-gray-100 p-6">
 
-            </tr>
+                <h1 className="text-4xl font-bold text-blue-600 mb-8">
+                    Sales Management
+                </h1>
 
-          </thead>
+                {/* SELL MEDICINE FORM */}
 
-          <tbody>
+                <div className="bg-white p-6 rounded-xl shadow mb-10">
 
-            {
-              medicines.map((medicine) => (
+                    <h2 className="text-2xl font-semibold mb-4">
+                        Sell Medicine
+                    </h2>
 
-                <tr
-                  key={medicine.id}
-                  className="border-b"
-                >
+                    <form
+                        onSubmit={sellMedicine}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                    >
 
-                  <td className="p-3">
-                    {medicine.medicineName}
-                  </td>
+                        {/* MEDICINE SELECT */}
 
-                  <td className="p-3">
-                    {medicine.quantity}
-                  </td>
+                        <select
+                            name="medicineId"
+                            value={saleData.medicineId}
+                            onChange={handleChange}
+                            className="border p-3 rounded-lg"
+                            required
+                        >
 
-                  <td className="p-3">
-                    ₹ {medicine.price}
-                  </td>
+                            <option value="">
+                                Select Medicine
+                            </option>
 
-                </tr>
-              ))
-            }
+                            {
+                                medicines.map((medicine) => (
 
-          </tbody>
+                                    <option
+                                        key={medicine.id}
+                                        value={medicine.id}
+                                    >
+                                        {medicine.medicineName}
+                                    </option>
+                                ))
+                            }
 
-        </table>
+                        </select>
 
-      </div>
+                        {/* QUANTITY */}
 
-      {/* WEEKLY SALES REPORT */}
+                        <input
+                            type="number"
+                            name="quantitySold"
+                            placeholder="Quantity Sold"
+                            value={saleData.quantitySold}
+                            onChange={handleChange}
+                            className="border p-3 rounded-lg"
+                            required
+                        />
 
-      <div className="bg-white p-6 rounded-xl shadow">
+                        {/* BUTTON */}
 
-        <h2 className="text-2xl font-semibold mb-4">
-          Weekly High Sales Report
-        </h2>
+                        <button
+                            type="submit"
+                            className="bg-green-600 text-white rounded-lg p-3 hover:bg-green-700"
+                        >
+                            Sell Medicine
+                        </button>
 
-        <table className="w-full border-collapse">
+                    </form>
 
-          <thead>
+                </div>
 
-            <tr className="bg-purple-600 text-white">
+                {/* MEDICINES STOCK TABLE */}
 
-              <th className="p-3 text-left">
-                Medicine
-              </th>
+                <div className="bg-white p-6 rounded-xl shadow mb-10 overflow-x-auto">
 
-              <th className="p-3 text-left">
-                Quantity Sold
-              </th>
+                    <h2 className="text-2xl font-semibold mb-4">
+                        Current Stock
+                    </h2>
 
-            </tr>
+                    <table className="w-full border-collapse">
 
-          </thead>
+                        <thead>
 
-          <tbody>
+                            <tr className="bg-blue-600 text-white">
 
-            {
-              weeklyReport.length > 0
-                ? (
-                    weeklyReport.map((report, index) => (
+                                <th className="p-3 text-left">
+                                    Medicine
+                                </th>
 
-                      <tr
-                        key={index}
-                        className="border-b"
-                      >
+                                <th className="p-3 text-left">
+                                    Quantity
+                                </th>
 
-                        <td className="p-3">
-                          {report.medicineName}
-                        </td>
+                                <th className="p-3 text-left">
+                                    Price
+                                </th>
 
-                        <td className="p-3">
-                          {report.totalQuantitySold}
-                        </td>
+                            </tr>
 
-                      </tr>
-                    ))
-                  )
-                : (
-                    <tr>
+                        </thead>
 
-                      <td
-                        colSpan="2"
-                        className="p-3 text-center text-gray-500"
-                      >
-                        No sales data available
-                      </td>
+                        <tbody>
 
-                    </tr>
-                  )
-            }
+                            {
+                                medicines.map((medicine) => (
 
-          </tbody>
+                                    <tr
+                                        key={medicine.id}
+                                        className="border-b"
+                                    >
 
-        </table>
+                                        <td className="p-3">
+                                            {medicine.medicineName}
+                                        </td>
 
-      </div>
+                                        <td className="p-3">
+                                            {medicine.quantity}
+                                        </td>
 
-    </div>
-  );
+                                        <td className="p-3">
+                                            ₹ {medicine.price}
+                                        </td>
+
+                                    </tr>
+                                ))
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {/* WEEKLY SALES REPORT */}
+
+                <div className="bg-white p-6 rounded-xl shadow">
+
+                    <h2 className="text-2xl font-semibold mb-4">
+                        Weekly High Sales Report
+                    </h2>
+
+                    <table className="w-full border-collapse">
+
+                        <thead>
+
+                            <tr className="bg-purple-600 text-white">
+
+                                <th className="p-3 text-left">
+                                    Medicine
+                                </th>
+
+                                <th className="p-3 text-left">
+                                    Quantity Sold
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {
+                                weeklyReport.length > 0
+                                    ? (
+                                        weeklyReport.map((report, index) => (
+
+                                            <tr
+                                                key={index}
+                                                className="border-b"
+                                            >
+
+                                                <td className="p-3">
+                                                    {report.medicineName}
+                                                </td>
+
+                                                <td className="p-3">
+                                                    {report.totalQuantitySold}
+                                                </td>
+
+                                            </tr>
+                                        ))
+                                    )
+                                    : (
+                                        <tr>
+
+                                            <td
+                                                colSpan="2"
+                                                className="p-3 text-center text-gray-500"
+                                            >
+                                                No sales data available
+                                            </td>
+
+                                        </tr>
+                                    )
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </MainLayout>
+    );
 }
 
 export default Sales;
