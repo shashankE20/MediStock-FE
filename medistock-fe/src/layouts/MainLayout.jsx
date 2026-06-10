@@ -1,91 +1,318 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import {
+    FaBars,
+    FaTimes,
+    FaHome,
+    FaCapsules,
+    FaBell,
+    FaShoppingCart,
+    FaRobot,
+    FaSignOutAlt,
+    FaUsers,
+    FaUserShield
+} from "react-icons/fa";
+
+import { MdAdminPanelSettings } from "react-icons/md";
+
 import { toast } from "react-toastify";
 
 function MainLayout({ children }) {
 
-  const navigate = useNavigate();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
+    const location = useLocation();
 
-    localStorage.removeItem("token");
+    const navigate = useNavigate();
 
-    toast.success("Logged out successfully");
+    const role = localStorage.getItem("role");
 
-    navigate("/");
-  };
+    const username = localStorage.getItem("username");
 
-  return (
+    const handleLogout = () => {
 
-    <div className="flex min-h-screen bg-gray-100">
+        localStorage.removeItem("token");
 
-      {/* SIDEBAR */}
+        toast.success("Logged Out Successfully");
 
-      <div className="w-[260px] bg-blue-700 text-white p-6">
+        navigate("/");
+    };
 
-        <h1 className="text-3xl font-bold mb-10">
-          MediStock
-        </h1>
+    const menuItems = [
+        {
+            path: "/dashboard",
+            name: "Dashboard",
+            icon: <FaHome />
+        },
 
-        <nav className="flex flex-col gap-4">
 
-          <Link
-            to="/dashboard"
-            className="hover:bg-blue-800 p-3 rounded-lg transition"
-          >
-            Dashboard
-          </Link>
 
-          <Link
-            to="/medicines"
-            className="hover:bg-blue-800 p-3 rounded-lg transition"
-          >
-            Medicines
-          </Link>
+        ...(role === "ADMIN"
+            ? [{
+                path: "/medicines",
+                name: "Medicines",
+                icon: <FaCapsules />
+            }]
+            : []),
 
-          <Link
-            to="/alerts"
-            className="hover:bg-blue-800 p-3 rounded-lg transition"
-          >
-            Alerts
-          </Link>
+        ...(role === "ADMIN"
+            ? [{
+                path: "/users",
+                name: "Users",
+                icon: <FaUsers />
+            }]
+            : []),
 
-          <Link
-            to="/sales"
-            className="hover:bg-blue-800 p-3 rounded-lg transition"
-          >
-            Sales
-          </Link>
+        {
+            path: "/alerts",
+            name: "Alerts",
+            icon: <FaBell />
+        },
 
-          <Link
-            to="/ai-insights"
-            className="hover:bg-blue-800 p-3 rounded-lg transition"
-          >
-            AI Insights
-          </Link>
+        {
+            path: "/sales",
+            name: "Sales",
+            icon: <FaShoppingCart />
+        },
 
-        </nav>
+        {
+            path: "/ai-insights",
+            name: "AI Insights",
+            icon: <FaRobot />
+        }
+    ];
 
-        {/* LOGOUT BUTTON */}
+    // const menuItems = [
+    //     {
+    //         path: "/dashboard",
+    //         name: "Dashboard",
+    //         icon: <FaHome />
+    //     },
+    //     {
+    //         path: "/medicines",
+    //         name: "Medicines",
+    //         icon: <FaCapsules />
+    //     },
+    //     {
+    //         path: "/alerts",
+    //         name: "Alerts",
+    //         icon: <FaBell />
+    //     },
+    //     {
+    //         path: "/sales",
+    //         name: "Sales",
+    //         icon: <FaShoppingCart />
+    //     },
+    //     {
+    //         path: "/ai-insights",
+    //         name: "AI Insights",
+    //         icon: <FaRobot />
+    //     }
+    // ];
 
-        <button
-          onClick={handleLogout}
-          className="mt-10 bg-red-500 hover:bg-red-600 w-full p-3 rounded-lg"
-        >
-          Logout
-        </button>
+    return (
 
-      </div>
+        <div className="min-h-screen bg-gray-100 flex">
 
-      {/* PAGE CONTENT */}
+            {/* MOBILE MENU BUTTON */}
 
-      <div className="flex-1 p-6 overflow-y-auto">
+            <button
+                className="md:hidden fixed top-4 left-4 z-50 bg-gray-600 text-white p-3 rounded-lg"
+                onClick={() => setSidebarOpen(true)}
+            >
+                <FaBars />
+            </button>
 
-        {children}
+            {/* SIDEBAR */}
 
-      </div>
+            <div
+                className={`fixed top-0 left-0 h-screen w-64 bg-gray-800 text-white p-6 z-40 flex flex-col transform transition-transform duration-300
+        ${sidebarOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full md:translate-x-0"
+                    }`}
+            >
 
-    </div>
-  );
+                {/* CLOSE BUTTON MOBILE */}
+
+                <div className="flex justify-between items-center mb-8 md:hidden">
+
+                    <h1 className="text-2xl font-bold">
+                        MediStock
+                    </h1>
+
+                    <button
+                        onClick={() => setSidebarOpen(false)}
+                    >
+                        <FaTimes />
+                    </button>
+
+                </div>
+
+                <div className="mb-10">
+
+                    <h1 className="text-4xl font-extrabold">
+                        MediStock
+                    </h1>
+
+                    <p className="text-white-100 text-sm mt-1">
+                        Pharmacy Management
+                    </p>
+
+                </div>
+                {/* <h1 className="text-3xl font-bold mb-10 hidden md:block">
+                    MediStock
+                </h1> */}
+                <div className="pb-3 ">
+                    <div className="mt-10 bg-white/10 rounded-2xl p-2">
+
+                        <div className="flex items-center gap-1 ">
+
+                            <div
+                                className="
+                            
+                            w-14
+                            h-14
+                            rounded-full
+                            bg-white
+                            flex
+                            items-center
+                            justify-center
+                            "
+                            >
+
+                                <FaUserShield
+                                    size={26}
+                                    className="text-blue-700"
+                                />
+
+                            </div>
+
+                            <div >
+
+                                <p className="font-bold text-white">
+                                    {username}
+                                </p>
+
+                                <div className="flex items-center gap-1">
+
+                                    <MdAdminPanelSettings
+                                        className="text-yellow-300"
+                                    />
+
+                                    <span className="text-white-100 text-sm">
+                                        {role}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto">
+                    <nav className="space-y-3">
+
+                        {
+                            menuItems.map((item) => (
+
+                                <Link
+                                    key={item.path}
+                                    to={item.path}
+                                    className={`flex items-center gap-3 p-4 rounded-2xl transition-all duration-300
+                ${location.pathname === item.path
+                                            ? "bg-[#bbbf63] text-white-700 shadow-lg"
+                                            : "hover:bg-[#bbbf63]"
+                                        }`}
+                                    onClick={() => setSidebarOpen(false)}
+                                >
+                                    {item.icon}
+
+                                    {item.name}
+
+                                </Link>
+                            ))
+                        }
+
+                    </nav>
+
+                </div>
+
+                {/* LOGOUT */}
+
+                <button
+                    onClick={handleLogout}
+                    className="
+                    mt-8
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                    hover:bg-[#bbbf63]
+                    w-full
+                    p-4
+                    rounded-2xl
+                    transition-all
+                    "
+                // className="mt-10 flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 w-full p-3 rounded-lg"
+                >
+                    <FaSignOutAlt />
+
+                    Logout
+                </button>
+
+            </div>
+
+            {/* PAGE CONTENT */}
+
+            {/* <div className="flex-1 md:ml-64 bg-[#F7F8FC] p-8 overflow-y-auto h-screen">
+
+                {children}
+
+            </div> */}
+            <div
+                className="flex-1 md:ml-64 bg-[#F7F8FC] p-0 overflow-y-auto h-screen"
+            >
+
+                <Header
+                    username={username}
+                    role={role}
+                    lowStockCount={
+                        Number(
+                            localStorage.getItem("lowStockCount")
+                        ) || 0
+                    }
+                    expiryAlertCount={
+                        Number(
+                            localStorage.getItem("expiryAlertCount")
+                        ) || 0
+                    }
+                />
+
+                <main
+                    className="
+    flex-1
+    overflow-y-auto
+    bg-[#F7F8FC]
+    p-6
+    "
+                >
+
+                    {children}
+
+                </main>
+
+                <Footer />
+
+            </div>
+
+        </div>
+    );
 }
 
 export default MainLayout;

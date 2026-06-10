@@ -3,16 +3,40 @@ import MainLayout from "../../layouts/MainLayout";
 import API from "../../api/axios";
 
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 function Sales() {
+
+    const navigate = useNavigate();
 
     const [medicines, setMedicines] = useState([]);
 
     const [weeklyReport, setWeeklyReport] = useState([]);
 
+    const [salesHistory, setSalesHistory] = useState([]);
+
+    const fetchSalesHistory = async () => {
+
+        try {
+
+            const response =
+                await API.get("/sales/history");
+
+            setSalesHistory(response.data);
+
+        }
+        catch (error) {
+
+            console.log(error);
+        }
+    };
+
     const [saleData, setSaleData] = useState({
         medicineId: "",
         quantitySold: "",
+        customerName: "",
+        phoneNumber: "",
     });
 
     // FETCH MEDICINES
@@ -75,6 +99,10 @@ function Sales() {
                     quantitySold: Number(
                         saleData.quantitySold
                     ),
+                    customerName:
+                        saleData.customerName,
+                    phoneNumber:
+                        saleData.phoneNumber
                 }
             );
 
@@ -84,10 +112,15 @@ function Sales() {
 
             fetchWeeklyReport();
 
+            fetchSalesHistory();
+
             setSaleData({
                 medicineId: "",
                 quantitySold: "",
+                customerName: "",
+                phoneNumber: ""
             });
+            fetchSalesHistory
 
         } catch (error) {
 
@@ -103,7 +136,11 @@ function Sales() {
 
         fetchWeeklyReport();
 
+        fetchSalesHistory();
+
+
     }, []);
+    
 
     return (
 
@@ -124,7 +161,7 @@ function Sales() {
 
                     <form
                         onSubmit={sellMedicine}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                        className="grid grid-cols-1 md:grid-cols-5 gap-4"
                     >
 
                         {/* MEDICINE SELECT */}
@@ -167,6 +204,26 @@ function Sales() {
                             required
                         />
 
+                        <input
+                            type="text"
+                            name="customerName"
+                            placeholder="Customer Name"
+                            value={saleData.customerName}
+                            onChange={handleChange}
+                            className="border p-3 rounded-lg"
+                            required
+                        />
+
+                        <input
+                            type="text"
+                            name="phoneNumber"
+                            placeholder="Phone Number"
+                            value={saleData.phoneNumber}
+                            onChange={handleChange}
+                            className="border p-3 rounded-lg"
+                            required
+                        />
+
                         {/* BUTTON */}
 
                         <button
@@ -182,7 +239,7 @@ function Sales() {
 
                 {/* MEDICINES STOCK TABLE */}
 
-                <div className="bg-white p-6 rounded-xl shadow mb-10 overflow-x-auto">
+                {/* <div className="bg-white p-6 rounded-xl shadow mb-10 overflow-x-auto">
 
                     <h2 className="text-2xl font-semibold mb-4">
                         Current Stock
@@ -240,11 +297,87 @@ function Sales() {
 
                     </table>
 
+                </div> */}
+
+                <div className="bg-white p-6 rounded-xl shadow">
+
+                    <h2 className="text-2xl font-semibold mb-4">
+                        Sales History
+                    </h2>
+
+                    <table className="w-full border-collapse">
+
+                        <thead>
+
+                            <tr className="bg-green-600 text-white">
+
+                                <th className="p-3 text-left">
+                                     ID
+                                </th>
+
+                                <th className="p-3 text-left">
+                                    Medicine Name
+                                </th>
+
+                                <th className="p-3 text-left">
+                                    Quantity of Medicine
+                                </th>
+
+                                <th className="p-3 text-left">
+                                    Customer Name
+                                </th>
+
+                                <th className="p-3 text-left">
+                                    Phone Number
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {
+                                salesHistory.map((sale) => (
+
+                                    <tr
+                                        key={sale.transactionId}
+                                        className="border-b"
+                                    >
+
+                                        <td className="p-3">
+                                            {sale.transactionId}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {sale.medicineName}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {sale.quantitySold}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {sale.customerName}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {sale.phoneNumber}
+                                        </td>
+
+                                    </tr>
+                                ))
+                            }
+
+                        </tbody>
+
+                    </table>
+
                 </div>
 
                 {/* WEEKLY SALES REPORT */}
 
-                <div className="bg-white p-6 rounded-xl shadow">
+                {/* <div className="bg-white p-6 rounded-xl shadow">
 
                     <h2 className="text-2xl font-semibold mb-4">
                         Weekly High Sales Report
@@ -308,6 +441,25 @@ function Sales() {
                         </tbody>
 
                     </table>
+
+                </div> */}
+
+                <div className="flex justify-left mt-6">
+
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="
+        bg-gray-600
+        hover:bg-gray-700
+        text-white
+        px-6
+        py-3
+        rounded-xl
+        transition
+        "
+                    >
+                        ← Back
+                    </button>
 
                 </div>
 

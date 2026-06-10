@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import API from "../../api/axios";
 
+import { useNavigate } from "react-router-dom";
+
 function Alerts() {
+
+    const navigate = useNavigate();
 
     const [lowStockAlerts, setLowStockAlerts] = useState([]);
 
@@ -163,6 +167,25 @@ function Alerts() {
                         }
 
                     </div>
+
+                </div>
+
+                 <div className="flex justify-lest mt-6">
+
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="
+        bg-gray-600
+        hover:bg-gray-700
+        text-white
+        px-6
+        py-3
+        rounded-xl
+        transition
+        "
+                    >
+                        ← Back
+                    </button>
 
                 </div>
             </div>

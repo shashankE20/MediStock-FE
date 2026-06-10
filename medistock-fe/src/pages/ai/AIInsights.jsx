@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import API from "../../api/axios";
 import MainLayout from "../../layouts/MainLayout";
+import { useNavigate } from "react-router-dom";
+
 function AIInsights() {
+
+    const navigate = useNavigate();
 
     const [insights, setInsights] = useState([]);
 
@@ -113,6 +117,25 @@ function AIInsights() {
                                 </p>
                             )
                     }
+
+                </div>
+
+                 <div className="flex justify-lest mt-6">
+
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="
+        bg-gray-600
+        hover:bg-gray-700
+        text-white
+        px-6
+        py-3
+        rounded-xl
+        transition
+        "
+                    >
+                        ← Back
+                    </button>
 
                 </div>
 

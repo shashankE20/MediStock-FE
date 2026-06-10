@@ -1,42 +1,3 @@
-// import { useState } from 'react'
-// import './App.css'
-
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-// import Login from "./pages/auth/Login";
-// import Dashboard from "./pages/dashboard/Dashboard";
-// import Medicines from "./pages/medicine/Medicines";
-// import Alerts from "./pages/alerts/Alerts";
-// import Sales from "./pages/sales/Sales";
-// import AIInsights from "./pages/ai/AIInsights";
-
-// import ProtectedRoute from './routes/ProtectedRoute';
-
-
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-
-//         <Route path="/" element={<Login />} />
-
-//         <Route path="/dashboard" element={<Dashboard />} />
-
-//         <Route path="/medicines" element={<Medicines />} />
-
-//         <Route path="/alerts" element={<Alerts />} />
-
-//         <Route path="/sales" element={<Sales />} />
-
-//         <Route path="/ai-insights" element={<AIInsights />} />
-
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 import "./App.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -47,9 +8,12 @@ import Medicines from "./pages/medicine/Medicines";
 import Alerts from "./pages/alerts/Alerts";
 import Sales from "./pages/sales/Sales";
 import AIInsights from "./pages/ai/AIInsights";
+import AdminRoute from "./routes/AdminRoute";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
-
+import Users from "./pages/users/Users";
+import SalesReport from "./pages/sales/SalesReport";
+import RevenueReport from "./pages/sales/RevenueReport";
 function App() {
   return (
     <BrowserRouter>
@@ -69,11 +33,35 @@ function App() {
         <Route
           path="/medicines"
           element={
+            <AdminRoute>
+              <Medicines />
+            </AdminRoute>
+          }
+
+
+        />
+        <Route
+          path="/medicines"
+          element={<Medicines />}
+        />
+
+        <Route
+          path="/medicines/low-stock"
+          element={<Medicines />}
+        />
+
+        <Route
+          path="/medicines/expiry"
+          element={<Medicines />}
+        />
+        {/* <Route
+          path="/medicines"
+          element={
             <ProtectedRoute>
               <Medicines />
             </ProtectedRoute>
           }
-        />
+        /> */}
 
         <Route
           path="/alerts"
@@ -102,7 +90,28 @@ function App() {
           }
         />
 
+        <Route
+          path="/users"
+          element={
+            <AdminRoute>
+              <Users />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/sales-report"
+          element={<SalesReport />}
+        />
+
+        <Route
+          path="/revenue-report"
+          element={<RevenueReport />}
+        />
+
       </Routes>
+
+
     </BrowserRouter>
   );
 }
