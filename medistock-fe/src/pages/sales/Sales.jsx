@@ -16,6 +16,10 @@ function Sales() {
 
     const [salesHistory, setSalesHistory] = useState([]);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const salesPerPage = 5;
+
+
     const fetchSalesHistory = async () => {
 
         try {
@@ -114,6 +118,8 @@ function Sales() {
 
             fetchSalesHistory();
 
+            setCurrentPage(1);
+
             setSaleData({
                 medicineId: "",
                 quantitySold: "",
@@ -140,20 +146,57 @@ function Sales() {
 
 
     }, []);
-    
+
+    const indexOfLastSale =
+        currentPage * salesPerPage;
+
+    const indexOfFirstSale =
+        indexOfLastSale - salesPerPage;
+
+    const currentSales =
+        salesHistory.slice(
+            indexOfFirstSale,
+            indexOfLastSale
+        );
+
+    const totalPages = Math.ceil(
+        salesHistory.length /
+        salesPerPage
+    );
+
+
+    const handlePrevious = () => {
+
+        if (currentPage > 1) {
+
+            setCurrentPage(
+                currentPage - 1
+            );
+        }
+    };
+
+    const handleNext = () => {
+
+        if (currentPage < totalPages) {
+
+            setCurrentPage(
+                currentPage + 1
+            );
+        }
+    };
 
     return (
 
         <MainLayout>
             <div className="min-h-screen bg-gray-100 p-6">
 
-                <h1 className="text-4xl font-bold text-blue-600 mb-8">
+                <h1 className="text-4xl font-bold text-gray-800 mb-8">
                     Sales Management
                 </h1>
 
                 {/* SELL MEDICINE FORM */}
 
-                <div className="bg-white p-6 rounded-xl shadow mb-10">
+                <div className="bg-white p-6 rounded-3xl shadow mb-10 border">
 
                     <h2 className="text-2xl font-semibold mb-4">
                         Sell Medicine
@@ -161,7 +204,7 @@ function Sales() {
 
                     <form
                         onSubmit={sellMedicine}
-                        className="grid grid-cols-1 md:grid-cols-5 gap-4"
+                        className="grid grid-cols-1 md:grid-cols-5 gap-4 "
                     >
 
                         {/* MEDICINE SELECT */}
@@ -298,21 +341,21 @@ function Sales() {
                     </table>
 
                 </div> */}
-
-                <div className="bg-white p-6 rounded-xl shadow">
-
-                    <h2 className="text-2xl font-semibold mb-4">
+<h2 className="text-2xl font-semibold mb-4">
                         Sales History
                     </h2>
+                <div className="bg-white p-6 rounded-xl shadow overflow-auto border">
 
-                    <table className="w-full border-collapse">
+                    
+
+                    <table className=" w-full border-collapse">
 
                         <thead>
 
                             <tr className="bg-green-600 text-white">
 
                                 <th className="p-3 text-left">
-                                     ID
+                                    ID
                                 </th>
 
                                 <th className="p-3 text-left">
@@ -338,7 +381,7 @@ function Sales() {
                         <tbody>
 
                             {
-                                salesHistory.map((sale) => (
+                                currentSales.map((sale) => (
 
                                     <tr
                                         key={sale.transactionId}
@@ -372,6 +415,61 @@ function Sales() {
                         </tbody>
 
                     </table>
+
+                    <div
+                        className="
+    flex
+    justify-between
+    items-center
+    mt-6
+    "
+                    >
+
+                        <button
+                            onClick={handlePrevious}
+                            disabled={currentPage === 1}
+                            className="
+        bg-gray-500
+        hover:bg-gray-700
+        text-white
+        px-4
+        py-2
+        rounded-lg
+        disabled:opacity-50
+        "
+                        >
+                            ← Previous
+                        </button>
+
+                        <span className="font-semibold">
+
+                            Page {currentPage}
+                            {" "}
+                            of
+                            {" "}
+                            {totalPages}
+
+                        </span>
+
+                        <button
+                            onClick={handleNext}
+                            disabled={
+                                currentPage === totalPages
+                            }
+                            className="
+        bg-blue-600
+        hover:bg-blue-700
+        text-white
+        px-4
+        py-2
+        rounded-lg
+        disabled:opacity-50
+        "
+                        >
+                            Next →
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -449,14 +547,14 @@ function Sales() {
                     <button
                         onClick={() => navigate(-1)}
                         className="
-        bg-gray-600
-        hover:bg-gray-700
-        text-white
-        px-6
-        py-3
-        rounded-xl
-        transition
-        "
+                        bg-gray-600
+                        hover:bg-gray-700
+                        text-white
+                        px-6
+                        py-3
+                        rounded-xl
+                        transition
+                        "
                     >
                         ← Back
                     </button>

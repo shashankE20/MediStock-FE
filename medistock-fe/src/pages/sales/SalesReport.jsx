@@ -105,11 +105,15 @@ function SalesReport() {
                         <tr>
 
                             <th className="p-3 border">
-                                Period
+                                Date
                             </th>
 
                             <th className="p-3 border">
                                 Total Medicines Sold
+                            </th>
+
+                            <th className="p-3 border">
+                                Medicines Name
                             </th>
 
                         </tr>
@@ -120,7 +124,7 @@ function SalesReport() {
 
                         {
                             Object.entries(groupedSales)
-                                .map(([period, qty]) => (
+                                .map(([period, qty, madicineName]) => (
 
                                     <tr key={period}>
 
@@ -130,6 +134,10 @@ function SalesReport() {
 
                                         <td className="border p-3">
                                             {qty}
+                                        </td>
+
+                                        <td className="border p-3">
+                                            {madicineName}
                                         </td>
 
                                     </tr>
