@@ -22,6 +22,8 @@ function Medicines() {
 
     const [currentPage, setCurrentPage] = useState(1);
 
+    const [errors, setErrors] = useState({});
+
     const medicinesPerPage = 10;
 
     const [editId, setEditId] = useState(null);
@@ -36,6 +38,15 @@ function Medicines() {
 
     const showExpiry = location.pathname === "/medicines/expiry";
 
+    const [sellErrors, setSellErrors] = useState({});
+
+    const [sellData, setSellData] = useState({
+        medicineId: "",
+        quantitySold: "",
+        customerName: "",
+        phoneNumber: ""
+    });
+
     const [formData, setFormData] = useState({
         medicineName: "",
         quantity: "",
@@ -45,14 +56,6 @@ function Medicines() {
     });
 
     const [showSellForm, setShowSellForm] = useState(false);
-
-    const [saleData, setSaleData] = useState({
-        medicineId: "",
-        quantitySold: "",
-        customerName: "",
-        phoneNumber: ""
-    });
-
 
     // FETCH ALL MEDICINES
 
@@ -82,19 +85,112 @@ function Medicines() {
         });
     };
 
-    const handleSaleChange = (e) => {
+    const validateMedicineForm = () => {
 
-        setSaleData({
-            ...saleData,
-            [e.target.name]: e.target.value
-        });
+        let newErrors = {};
 
+        if (!formData.medicineName.trim()) {
+            newErrors.medicineName =
+                "Medicine Name is required";
+        }
+
+        if (!formData.quantity) {
+            newErrors.quantity =
+                "Quantity is required";
+        } else if (Number(formData.quantity) <= 0) {
+            newErrors.quantity =
+                "Quantity must be greater than 0";
+        }
+
+        if (!formData.price) {
+            newErrors.price =
+                "Price is required";
+        } else if (Number(formData.price) <= 0) {
+            newErrors.price =
+                "Price must be greater than 0";
+        }
+
+        if (!formData.expiryDate) {
+            newErrors.expiryDate =
+                "Expiry Date is required";
+        }
+
+        if (!formData.manufacturer.trim()) {
+            newErrors.manufacturer =
+                "Manufacturer is required";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
     };
-    // ADD MEDICINE
 
+    // ADD MEDICINE
     const addMedicine = async (e) => {
 
         e.preventDefault();
+
+        let newErrors = {};
+
+        // Medicine Name Validation
+        if (!formData.medicineName.trim()) {
+            newErrors.medicineName =
+                "Medicine Name is required";
+        }
+
+        // Quantity Validation
+        if (!formData.quantity) {
+            newErrors.quantity =
+                "Quantity is required";
+        } else if (Number(formData.quantity) <= 0) {
+            newErrors.quantity =
+                "Quantity must be greater than 0";
+        }
+
+        // Price Validation
+        if (!formData.price) {
+            newErrors.price =
+                "Price is required";
+        } else if (Number(formData.price) <= 0) {
+            newErrors.price =
+                "Price must be greater than 0";
+        }
+
+        // Expiry Date Validation
+        if (!formData.expiryDate) {
+            newErrors.expiryDate =
+                "Expiry Date is required";
+        } else {
+
+            const selectedDate =
+                new Date(formData.expiryDate);
+
+            const today = new Date();
+
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate <= today) {
+                newErrors.expiryDate =
+                    "Expiry Date must be a future date";
+            }
+        }
+
+        // Manufacturer Validation
+        if (!formData.manufacturer.trim()) {
+            newErrors.manufacturer =
+                "Manufacturer is required";
+        }
+
+        // Stop submission if validation fails
+        if (Object.keys(newErrors).length > 0) {
+
+            setErrors(newErrors);
+
+            return;
+        }
+
+        // Clear old errors
+        setErrors({});
 
         try {
 
@@ -106,9 +202,13 @@ function Medicines() {
                     price: Number(formData.price),
                 }
             );
-            toast.success("Medicines added successfully")
+
+            toast.success(
+                "Medicine added successfully"
+            );
 
             fetchMedicines();
+
             setShowForm(false);
 
             setFormData({
@@ -122,12 +222,14 @@ function Medicines() {
         } catch (error) {
 
             console.log(error);
+
+            toast.error(
+                "Failed to add medicine"
+            );
         }
     };
 
-    // EDIT MEDICINE
-
-    const editMedicine = (medicine) => {
+     const editMedicine = (medicine) => {
 
         setShowForm(true);
 
@@ -150,7 +252,25 @@ function Medicines() {
         e.preventDefault();
 
         try {
+            if (!formData.medicineName.trim()) {
+                toast.error("Medicine Name is required");
+                return;
+            }
 
+            if (Number(formData.quantity) <= 0) {
+                toast.error("Quantity must be greater than 0");
+                return;
+            }
+
+            if (Number(formData.price) <= 0) {
+                toast.error("Price must be greater than 0");
+                return;
+            }
+
+            if (!formData.manufacturer.trim()) {
+                toast.error("Manufacturer is required");
+                return;
+            }
             await API.put(
                 `/medicines/${editId}`,
                 {
@@ -180,20 +300,83 @@ function Medicines() {
         }
     };
 
+    const handleSellChange = (e) => {
+
+        const { name, value } = e.target;
+
+        setSellData({
+            ...sellData,
+            [name]: value,
+        });
+
+        setSellErrors({
+            ...sellErrors,
+            [name]: "",
+        });
+    };
+
+    const validateSellForm = () => {
+
+        let newErrors = {};
+
+        if (!sellData.medicineId) {
+            newErrors.medicineId =
+                "Please select medicine";
+        }
+
+        if (!sellData.quantitySold) {
+            newErrors.quantitySold =
+                "Quantity is required";
+        } else if (Number(sellData.quantitySold) <= 0) {
+            newErrors.quantitySold =
+                "Quantity must be greater than 0";
+        }
+
+        if (!sellData.customerName.trim()) {
+            newErrors.customerName =
+                "Customer Name is required";
+        }
+
+        if (!sellData.phoneNumber.trim()) {
+
+            newErrors.phoneNumber =
+                "Phone Number is required";
+
+        } else if (
+            !/^[6-9]\d{9}$/.test(
+                sellData.phoneNumber
+            )
+        ) {
+
+            newErrors.phoneNumber =
+                "Phone number must start with 6,7,8,9 and contain exactly 10 digits";
+
+        }
+
+        setSellErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
     const sellMedicine = async (e) => {
 
         e.preventDefault();
 
+        if (!validateSellForm()) {
+            return;
+        }
+
         try {
 
             await API.post(
-                `/sales/sell/${saleData.medicineId}`,
+                `/sales/sell/${sellData.medicineId}`,
                 {
                     quantitySold: Number(
-                        saleData.quantitySold
+                        sellData.quantitySold
                     ),
-                    customerName: saleData.customerName,
-                    phoneNumber: saleData.phoneNumber
+                    customerName:
+                        sellData.customerName,
+                    phoneNumber:
+                        sellData.phoneNumber,
                 }
             );
 
@@ -203,27 +386,22 @@ function Medicines() {
 
             fetchMedicines();
 
-            setSaleData({
+            setSellData({
                 medicineId: "",
                 quantitySold: "",
                 customerName: "",
-                phoneNumber: ""
+                phoneNumber: "",
             });
 
-            setShowSellForm(false);
+            setSellErrors({});
 
         } catch (error) {
 
             console.log(error);
 
-            toast.error(
-                "Sale Failed"
-            );
+            toast.error("Sale Failed");
         }
-
     };
-
-    // DELETE MEDICINE
 
     const deleteMedicine = async (id) => {
 
@@ -296,31 +474,6 @@ function Medicines() {
                     .includes(search)
             );
         });
-
-    // const filteredMedicines = medicines.filter((medicine) => {
-
-    //     const search = debouncedSearch.toLowerCase();
-
-    //     return (
-
-    //         medicine.medicineName
-    //             ?.toLowerCase()
-    //             .includes(search)
-
-    //         ||
-
-    //         medicine.manufacturer
-    //             ?.toLowerCase()
-    //             .includes(search)
-
-    //         ||
-
-    //         medicine.expiryDate
-    //             ?.toLowerCase()
-    //             .includes(search)
-
-    //     );
-    // });
 
     const indexOfLastMedicine =
         currentPage * medicinesPerPage;
@@ -461,54 +614,129 @@ function Medicines() {
                 "
                             >
 
+                                <label className="font-medium">
+                                    Medicine Name
+                                    <span className="text-red-500 ml-1">*</span>
+                                </label>
+
                                 <input
                                     type="text"
                                     name="medicineName"
-                                    placeholder="Medicine Name"
+                                    placeholder="Enter Medicine Name"
                                     value={formData.medicineName}
                                     onChange={handleChange}
-                                    className="border p-3 rounded-lg"
-                                    required
+                                    className={`border p-3 rounded-lg w-full ${errors.medicineName
+                                        ? "border-red-500"
+                                        : ""
+                                        }`}
                                 />
+
+                                {
+                                    errors.medicineName && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.medicineName}
+                                        </p>
+                                    )
+                                }
+
+                                <label className="font-medium">
+                                    Quantity
+                                    <span className="text-red-500 ml-1">*</span>
+                                </label>
 
                                 <input
                                     type="number"
                                     name="quantity"
-                                    placeholder="Quantity"
+                                    placeholder="Enter Quantity"
                                     value={formData.quantity}
                                     onChange={handleChange}
-                                    className="border p-3 rounded-lg"
-                                    required
+                                    className={`border p-3 rounded-lg w-full ${errors.quantity
+                                        ? "border-red-500"
+                                        : ""
+                                        }`}
                                 />
+
+                                {
+                                    errors.quantity && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.quantity}
+                                        </p>
+                                    )
+                                }
+
+                                <label className="font-medium">
+                                    Price
+                                    <span className="text-red-500 ml-1">*</span>
+                                </label>
 
                                 <input
                                     type="number"
                                     name="price"
-                                    placeholder="Price"
+                                    placeholder="Enter Price"
                                     value={formData.price}
                                     onChange={handleChange}
-                                    className="border p-3 rounded-lg"
-                                    required
+                                    className={`border p-3 rounded-lg w-full ${errors.price
+                                        ? "border-red-500"
+                                        : ""
+                                        }`}
                                 />
+
+                                {
+                                    errors.price && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.price}
+                                        </p>
+                                    )
+                                }
+
+                                <label className="font-medium">
+                                    Expiry Date
+                                    <span className="text-red-500 ml-1">*</span>
+                                </label>
 
                                 <input
                                     type="date"
                                     name="expiryDate"
                                     value={formData.expiryDate}
                                     onChange={handleChange}
-                                    className="border p-3 rounded-lg"
-                                    required
+                                    className={`border p-3 rounded-lg w-full ${errors.expiryDate
+                                        ? "border-red-500"
+                                        : ""
+                                        }`}
                                 />
+
+                                {
+                                    errors.expiryDate && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.expiryDate}
+                                        </p>
+                                    )
+                                }
+
+                                <label className="font-medium">
+                                    Manufacturer
+                                    <span className="text-red-500 ml-1">*</span>
+                                </label>
 
                                 <input
                                     type="text"
                                     name="manufacturer"
-                                    placeholder="Manufacturer"
+                                    placeholder="Enter Manufacturer"
                                     value={formData.manufacturer}
                                     onChange={handleChange}
-                                    className="border p-3 rounded-lg"
-                                    required
+                                    className={`border p-3 rounded-lg w-full ${errors.manufacturer
+                                        ? "border-red-500"
+                                        : ""
+                                        }`}
                                 />
+
+                                {
+                                    errors.manufacturer && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.manufacturer}
+                                        </p>
+                                    )
+                                }
 
                                 <div className="flex gap-3">
 
@@ -635,86 +863,184 @@ function Medicines() {
 
                                 <form
                                     onSubmit={sellMedicine}
-                                    className="
-                    grid
-                    grid-cols-1
-                    md:grid-cols-2
-                    gap-4
-                    "
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
                                 >
 
-                                    <select
-                                        name="medicineId"
-                                        value={saleData.medicineId}
-                                        onChange={handleSaleChange}
-                                        className="border p-3 rounded-lg"
-                                        required
-                                    >
+                                    {/* MEDICINE */}
 
-                                        <option value="">
-                                            Select Medicine
-                                        </option>
+                                    <div>
+
+                                        <label className="font-medium">
+                                            Medicine
+                                            <span className="text-red-500 ml-1">*</span>
+                                        </label>
+
+                                        <select
+                                            name="medicineId"
+                                            value={sellData.medicineId}
+                                            onChange={handleSellChange}
+                                            className={`w-full border p-3 rounded-lg mt-1 ${sellErrors.medicineId
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                                }`}
+                                        >
+
+                                            <option value="">
+                                                Select Medicine
+                                            </option>
+
+                                            {
+                                                medicines.map((medicine) => (
+
+                                                    <option
+                                                        key={medicine.id}
+                                                        value={medicine.id}
+                                                    >
+                                                        {medicine.medicineName}
+                                                    </option>
+
+                                                ))
+                                            }
+
+                                        </select>
 
                                         {
-                                            medicines.map((medicine) => (
+                                            sellErrors.medicineId && (
 
-                                                <option
-                                                    key={medicine.id}
-                                                    value={medicine.id}
-                                                >
-                                                    {medicine.medicineName}
-                                                </option>
+                                                <p className="text-red-500 text-sm mt-1">
+                                                    {sellErrors.medicineId}
+                                                </p>
 
-                                            ))
+                                            )
                                         }
 
-                                    </select>
+                                    </div>
 
-                                    <input
-                                        type="number"
-                                        name="quantitySold"
-                                        placeholder="Quantity"
-                                        value={saleData.quantitySold}
-                                        onChange={handleSaleChange}
-                                        className="border p-3 rounded-lg"
-                                        required
-                                    />
+                                    {/* QUANTITY */}
 
-                                    <input
-                                        type="text"
-                                        name="customerName"
-                                        placeholder="Customer Name"
-                                        value={saleData.customerName}
-                                        onChange={handleSaleChange}
-                                        className="border p-3 rounded-lg"
-                                        required
-                                    />
+                                    <div>
 
-                                    <input
-                                        type="text"
-                                        name="phoneNumber"
-                                        placeholder="Phone Number"
-                                        value={saleData.phoneNumber}
-                                        onChange={handleSaleChange}
-                                        className="border p-3 rounded-lg"
-                                        required
-                                    />
+                                        <label className="font-medium">
+                                            Quantity
+                                            <span className="text-red-500 ml-1">*</span>
+                                        </label>
 
-                                    <button
-                                        type="submit"
-                                        className="
-                        md:col-span-2
-                        bg-green-600
-                        hover:bg-green-700
-                        text-white
-                        p-3
-                        rounded-xl
-                        "
-                                    >
-                                        Complete Sale
-                                    </button>
+                                        <input
+                                            type="number"
+                                            name="quantitySold"
+                                            value={sellData.quantitySold}
+                                            onChange={handleSellChange}
+                                            placeholder="Enter Quantity"
+                                            min="1"
+                                            className={`w-full border p-3 rounded-lg mt-1 ${sellErrors.quantitySold
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                                }`}
+                                        />
+
+                                        {
+                                            sellErrors.quantitySold && (
+
+                                                <p className="text-red-500 text-sm mt-1">
+                                                    {sellErrors.quantitySold}
+                                                </p>
+
+                                            )
+                                        }
+
+                                    </div>
+
+                                    {/* CUSTOMER NAME */}
+
+                                    <div>
+
+                                        <label className="font-medium">
+                                            Customer Name
+                                            <span className="text-red-500 ml-1">*</span>
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="customerName"
+                                            value={sellData.customerName}
+                                            onChange={handleSellChange}
+                                            placeholder="Enter Customer Name"
+                                            className={`w-full border p-3 rounded-lg mt-1 ${sellErrors.customerName
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                                }`}
+                                        />
+
+                                        {
+                                            sellErrors.customerName && (
+
+                                                <p className="text-red-500 text-sm mt-1">
+                                                    {sellErrors.customerName}
+                                                </p>
+
+                                            )
+                                        }
+
+                                    </div>
+
+                                    {/* PHONE NUMBER */}
+
+                                    <div>
+
+                                        <label className="font-medium">
+                                            Phone Number
+                                            <span className="text-red-500 ml-1">*</span>
+                                        </label>
+
+                                        <input
+                                            type="tel"
+                                            name="phoneNumber"
+                                            value={sellData.phoneNumber}
+                                            onChange={handleSellChange}
+                                            placeholder="Enter 10 Digit Phone Number"
+                                            maxLength={10}
+                                            className={`w-full border p-3 rounded-lg mt-1 ${sellErrors.phoneNumber
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                                }`}
+                                        />
+
+                                        {
+                                            sellErrors.phoneNumber && (
+
+                                                <p className="text-red-500 text-sm mt-1">
+                                                    {sellErrors.phoneNumber}
+                                                </p>
+
+                                            )
+                                        }
+
+                                    </div>
+
+                                    {/* SUBMIT BUTTON */}
+
+                                    <div className="md:col-span-2 flex justify-end mt-4">
+
+                                        <button
+                                            type="submit"
+                                            className="
+            bg-green-600
+            hover:bg-green-700
+            text-white
+            px-8
+            py-3
+            rounded-lg
+            font-medium
+            transition
+            "
+                                        >
+                                            Sell Medicine
+                                        </button>
+
+                                    </div>
 
                                 </form>
+
 
                             </div>
 
@@ -722,17 +1048,6 @@ function Medicines() {
 
                     )
                 }
-                {/* <div className="mb-4 ">
-
-                    <input
-                        type="text"
-                        placeholder="Search Medicine..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="border p-3 rounded-4xl "
-                    />
-
-                </div> */}
 
                 {/* MEDICINES TABLE */}
 
