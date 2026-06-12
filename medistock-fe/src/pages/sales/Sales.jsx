@@ -194,92 +194,6 @@ function Sales() {
                     Sales Management
                 </h1>
 
-                {/* SELL MEDICINE FORM */}
-
-                <div className="bg-white p-6 rounded-3xl shadow mb-10 border">
-
-                    <h2 className="text-2xl font-semibold mb-4">
-                        Sell Medicine
-                    </h2>
-
-                    <form
-                        onSubmit={sellMedicine}
-                        className="grid grid-cols-1 md:grid-cols-5 gap-4 "
-                    >
-
-                        {/* MEDICINE SELECT */}
-
-                        <select
-                            name="medicineId"
-                            value={saleData.medicineId}
-                            onChange={handleChange}
-                            className="border p-3 rounded-lg"
-                            required
-                        >
-
-                            <option value="">
-                                Select Medicine
-                            </option>
-
-                            {
-                                medicines.map((medicine) => (
-
-                                    <option
-                                        key={medicine.id}
-                                        value={medicine.id}
-                                    >
-                                        {medicine.medicineName}
-                                    </option>
-                                ))
-                            }
-
-                        </select>
-
-                        {/* QUANTITY */}
-
-                        <input
-                            type="number"
-                            name="quantitySold"
-                            placeholder="Quantity Sold"
-                            value={saleData.quantitySold}
-                            onChange={handleChange}
-                            className="border p-3 rounded-lg"
-                            required
-                        />
-
-                        <input
-                            type="text"
-                            name="customerName"
-                            placeholder="Customer Name"
-                            value={saleData.customerName}
-                            onChange={handleChange}
-                            className="border p-3 rounded-lg"
-                            required
-                        />
-
-                        <input
-                            type="text"
-                            name="phoneNumber"
-                            placeholder="Phone Number"
-                            value={saleData.phoneNumber}
-                            onChange={handleChange}
-                            className="border p-3 rounded-lg"
-                            required
-                        />
-
-                        {/* BUTTON */}
-
-                        <button
-                            type="submit"
-                            className="bg-green-600 text-white rounded-lg p-3 hover:bg-green-700"
-                        >
-                            Sell Medicine
-                        </button>
-
-                    </form>
-
-                </div>
-
                 {/* MEDICINES STOCK TABLE */}
 
                 {/* <div className="bg-white p-6 rounded-xl shadow mb-10 overflow-x-auto">
@@ -341,12 +255,11 @@ function Sales() {
                     </table>
 
                 </div> */}
-<h2 className="text-2xl font-semibold mb-4">
-                        Sales History
-                    </h2>
+                <h2 className="text-2xl font-semibold mb-4">
+                    Sales History
+                </h2>
                 <div className="bg-white p-6 rounded-xl shadow overflow-auto border">
 
-                    
 
                     <table className=" w-full border-collapse">
 

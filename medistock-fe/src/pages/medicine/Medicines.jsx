@@ -32,9 +32,9 @@ function Medicines() {
 
     const location = useLocation();
 
-    const showLowStock= location.pathname === "/medicines/low-stock";
+    const showLowStock = location.pathname === "/medicines/low-stock";
 
-    const showExpiry= location.pathname === "/medicines/expiry";
+    const showExpiry = location.pathname === "/medicines/expiry";
 
     const [formData, setFormData] = useState({
         medicineName: "",
@@ -42,6 +42,15 @@ function Medicines() {
         price: "",
         expiryDate: "",
         manufacturer: "",
+    });
+
+    const [showSellForm, setShowSellForm] = useState(false);
+
+    const [saleData, setSaleData] = useState({
+        medicineId: "",
+        quantitySold: "",
+        customerName: "",
+        phoneNumber: ""
     });
 
 
@@ -73,6 +82,14 @@ function Medicines() {
         });
     };
 
+    const handleSaleChange = (e) => {
+
+        setSaleData({
+            ...saleData,
+            [e.target.name]: e.target.value
+        });
+
+    };
     // ADD MEDICINE
 
     const addMedicine = async (e) => {
@@ -163,6 +180,49 @@ function Medicines() {
         }
     };
 
+    const sellMedicine = async (e) => {
+
+        e.preventDefault();
+
+        try {
+
+            await API.post(
+                `/sales/sell/${saleData.medicineId}`,
+                {
+                    quantitySold: Number(
+                        saleData.quantitySold
+                    ),
+                    customerName: saleData.customerName,
+                    phoneNumber: saleData.phoneNumber
+                }
+            );
+
+            toast.success(
+                "Medicine Sold Successfully"
+            );
+
+            fetchMedicines();
+
+            setSaleData({
+                medicineId: "",
+                quantitySold: "",
+                customerName: "",
+                phoneNumber: ""
+            });
+
+            setShowSellForm(false);
+
+        } catch (error) {
+
+            console.log(error);
+
+            toast.error(
+                "Sale Failed"
+            );
+        }
+
+    };
+
     // DELETE MEDICINE
 
     const deleteMedicine = async (id) => {
@@ -202,40 +262,40 @@ function Medicines() {
     }, [searchTerm]);
 
     const filteredMedicines = medicines
-    .filter((medicine) => {
+        .filter((medicine) => {
 
-        if (showLowStock) {
-            return medicine.quantity <= 10;
-        }
+            if (showLowStock) {
+                return medicine.quantity <= 10;
+            }
 
-        if (showExpiry){
+            if (showExpiry) {
 
-            const today = new Date();
-            const expiry = new Date(medicine.expiryDate);
+                const today = new Date();
+                const expiry = new Date(medicine.expiryDate);
 
-            const diffDays = Math.ceil((expiry - today)/(1000*60*60*24));
-            return diffDays >=0 && diffDays <= 30;
-        }
+                const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                return diffDays >= 0 && diffDays <= 30;
+            }
 
-        return true;
-    })
-    .filter((medicine) => {
+            return true;
+        })
+        .filter((medicine) => {
 
-        const search =
-            debouncedSearch.toLowerCase();
+            const search =
+                debouncedSearch.toLowerCase();
 
-        return (
-            medicine.medicineName
-                ?.toLowerCase()
-                .includes(search)
+            return (
+                medicine.medicineName
+                    ?.toLowerCase()
+                    .includes(search)
 
-            ||
+                ||
 
-            medicine.manufacturer
-                ?.toLowerCase()
-                .includes(search)
-        );
-    });
+                medicine.manufacturer
+                    ?.toLowerCase()
+                    .includes(search)
+            );
+        });
 
     // const filteredMedicines = medicines.filter((medicine) => {
 
@@ -320,7 +380,7 @@ function Medicines() {
         <MainLayout>
             <div className="min-h-screen bg-gray-100 p-6">
 
-                
+
                 <div className="flex justify-between items-center mb-6">
 
                     <h1 className="text-4xl font-bold text-gray-800">
@@ -492,7 +552,177 @@ function Medicines() {
                     )
                 }
 
-                <div className="mb-4 ">
+
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
+
+                    <input
+                        type="text"
+                        placeholder="Search Medicine..."
+                        value={searchTerm}
+                        onChange={(e) =>
+                            setSearchTerm(e.target.value)
+                        }
+                        className="
+        border
+        p-3
+        rounded-full
+        flex-1
+        "
+                    />
+
+                    <button
+                        onClick={() =>
+                            setShowSellForm(true)
+                        }
+                        className="
+        bg-green-600
+        hover:bg-green-700
+        text-white
+        px-6
+        py-3
+        rounded-3xl
+        "
+                    >
+                        Sell Medicine
+                    </button>
+
+                </div>
+
+                {
+                    showSellForm && (
+
+                        <div
+                            className="
+            fixed
+            inset-0
+            bg-black/50
+            flex
+            items-center
+            justify-center
+            z-50
+            "
+                        >
+
+                            <div
+                                className="
+                bg-white
+                rounded-3xl
+                p-8
+                w-full
+                max-w-2xl
+                "
+                            >
+
+                                <div className="flex justify-between items-center mb-6">
+
+                                    <h2 className="text-2xl font-bold">
+                                        Sell Medicine
+                                    </h2>
+
+                                    <button
+                                        onClick={() =>
+                                            setShowSellForm(false)
+                                        }
+                                        className="
+                        text-red-500
+                        font-bold
+                        "
+                                    >
+                                        ✕
+                                    </button>
+
+                                </div>
+
+                                <form
+                                    onSubmit={sellMedicine}
+                                    className="
+                    grid
+                    grid-cols-1
+                    md:grid-cols-2
+                    gap-4
+                    "
+                                >
+
+                                    <select
+                                        name="medicineId"
+                                        value={saleData.medicineId}
+                                        onChange={handleSaleChange}
+                                        className="border p-3 rounded-lg"
+                                        required
+                                    >
+
+                                        <option value="">
+                                            Select Medicine
+                                        </option>
+
+                                        {
+                                            medicines.map((medicine) => (
+
+                                                <option
+                                                    key={medicine.id}
+                                                    value={medicine.id}
+                                                >
+                                                    {medicine.medicineName}
+                                                </option>
+
+                                            ))
+                                        }
+
+                                    </select>
+
+                                    <input
+                                        type="number"
+                                        name="quantitySold"
+                                        placeholder="Quantity"
+                                        value={saleData.quantitySold}
+                                        onChange={handleSaleChange}
+                                        className="border p-3 rounded-lg"
+                                        required
+                                    />
+
+                                    <input
+                                        type="text"
+                                        name="customerName"
+                                        placeholder="Customer Name"
+                                        value={saleData.customerName}
+                                        onChange={handleSaleChange}
+                                        className="border p-3 rounded-lg"
+                                        required
+                                    />
+
+                                    <input
+                                        type="text"
+                                        name="phoneNumber"
+                                        placeholder="Phone Number"
+                                        value={saleData.phoneNumber}
+                                        onChange={handleSaleChange}
+                                        className="border p-3 rounded-lg"
+                                        required
+                                    />
+
+                                    <button
+                                        type="submit"
+                                        className="
+                        md:col-span-2
+                        bg-green-600
+                        hover:bg-green-700
+                        text-white
+                        p-3
+                        rounded-xl
+                        "
+                                    >
+                                        Complete Sale
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    )
+                }
+                {/* <div className="mb-4 ">
 
                     <input
                         type="text"
@@ -502,7 +732,7 @@ function Medicines() {
                         className="border p-3 rounded-4xl "
                     />
 
-                </div>
+                </div> */}
 
                 {/* MEDICINES TABLE */}
 
@@ -689,7 +919,7 @@ mt-6
         disabled:opacity-50
         "
                         >
-                           ← Previous
+                            ← Previous
                         </button>
 
                         <span className="font-semibold">
